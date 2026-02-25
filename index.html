@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>CROW</title>
+
+<style>
+body {
+  background: black;
+  color: #00ff00;
+  font-family: monospace;
+  margin: 40px;
+}
+
+input {
+  background: black;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  font-family: monospace;
+}
+
+pre {
+  white-space: pre-wrap;
+}
+</style>
+</head>
+
+<body>
+
+<pre>
+No names. No traces.
+</pre>
+
+<p>> enter password_</p>
+<input id="pw" type="password" autofocus>
+<p id="msg"></p>
+
+<script>
+/* ===== 設定 ===== */
+const correct = "96013";
+const LOGO_FILE = "file_0000000057d471fa82068bf4457a4806.png";
+
+/* ===== 重めノイズ（侵食型・1秒） ===== */
+function noiseBurst(ms = 1000) {
+  const c = document.createElement("canvas");
+  const ctx = c.getContext("2d");
+
+  // 解像度を落として荒さを出す
+  c.width = window.innerWidth / 2;
+  c.height = window.innerHeight / 2;
+
+  c.style.position = "fixed";
+  c.style.left = "0";
+  c.style.top = "0";
+  c.style.width = "100vw";
+  c.style.height = "100vh";
+  c.style.zIndex = "9997";
+  c.style.pointerEvents = "none";
+  c.style.opacity = "0.35";
+  c.style.mixBlendMode = "screen";
+
+  document.body.appendChild(c);
+
+  let stop = false;
+
+  function frame() {
+    if (stop) return;
+    const img = ctx.createImageData(c.width, c.height);
+    const d = img.data;
+
+    for (let i = 0; i < d.length; i += 4) {
+      const v = Math.random() > 0.985 ? 255 : (Math.random() * 180) | 0;
+      d[i] = v;
+      d[i + 1] = v;
+      d[i + 2] = v;
+      d[i + 3] = 255;
+    }
+
+    ctx.putImageData(img, 0, 0);
+    requestAnimationFrame(frame);
+  }
+
+  frame();
+
+  setTimeout(() => {
+    stop = true;
+    c.remove();
+  }, ms);
+}
+
+/* ===== Feather Drop（全画面・侵食ロゴ） ===== */
+function featherDrop() {
+  const img = document.createElement("img");
+  img.src = LOGO_FILE;
+
+  img.style.position = "fixed";
+  img.style.left = "0";
+  img.style.top = "0";
+  img.style.width = "100vw";
+  img.style.height = "100vh";
+  img.style.objectFit = "cover";     // ← 画面を侵す
+  img.style.opacity = "0.85";
+  img.style.pointerEvents = "none";
+  img.style.zIndex = "9998";
+  img.style.mixBlendMode = "screen"; // ← ノイズと溶ける
+
+  img.onerror = () => img.remove();
+
+  document.body.appendChild(img);
+
+  setTimeout(() => {
+    img.remove();
+  }, 1000);
+}
+
+/* ===== 白フラッシュ（脳がバグるやつ） ===== */
+function flashWhite() {
+  const f = document.createElement("div");
+  f.style.position = "fixed";
+  f.style.left = "0";
+  f.style.top = "0";
+  f.style.width = "100vw";
+  f.style.height = "100vh";
+  f.style.background = "#fff";
+  f.style.opacity = "0.85";
+  f.style.zIndex = "9999";
+  f.style.pointerEvents = "none";
+
+  document.body.appendChild(f);
+
+  setTimeout(() => f.remove(), 80); // 0.08秒
+}
+
+/* ===== 入力処理 ===== */
+document.getElementById("pw").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    if (this.value === correct) {
+      document.body.innerHTML = `
+<pre>
+error code:[96013]
+access granted.
+
+処理は完了した。
+それは、もう知っている。
+秩序は回っている。
+</pre>
+`;
+      // 演出順
+      flashWhite();        // 一瞬の錯覚
+      noiseBurst(1000);   // 重いノイズ
+      featherDrop();      // 全画面侵食
+    } else {
+      document.getElementById("msg").innerText = "access denied.";
+    }
+  }
+});
+</script>
+
+</body>
+</html>
