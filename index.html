@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>CROW</title>
+<style>
+body {
+  background:black;
+  color:#0f0;
+  font-family: monospace;
+  margin:40px;
+}
+input {
+  background:black;
+  color:#0f0;
+  border:1px solid #0f0;
+}
+.hidden { display:none; }
+</style>
+</head>
+
+<body>
+<pre>
+No names. No traces.
+</pre>
+
+<p>> enter password_</p>
+<input id="pw" type="password" autofocus>
+<p id="msg"></p>
+
+<script>
+const correct = "96013";
+
+document.getElementById("pw").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    if(this.value === correct){
+      document.body.innerHTML = `
+<pre>
+error code:[96013]
+access granted.
+
+処理は完了した。
+それは、もう知っている。
+秩序は回っている。
+
+— Feather Drop —
+</pre>`;
+    } else {
+      document.getElementById("msg").innerText = "access denied.";
+    }
+  }
+});
+</script>
+</body>
+</html>
