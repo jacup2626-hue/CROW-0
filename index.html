@@ -1,0 +1,41 @@
+<script>
+const correct = "96013";
+
+function featherDrop(){
+  const img = document.createElement("img");
+  img.src = "file_0000000057d471fa82068bf4457a4806.png";
+  img.style.position = "fixed";
+  img.style.left = "50%";
+  img.style.top = "50%";
+  img.style.transform = "translate(-50%, -50%)";
+  img.style.width = "220px";
+  img.style.opacity = "0.95";
+  img.style.pointerEvents = "none";
+  img.style.zIndex = "9999";
+  document.body.appendChild(img);
+
+  setTimeout(() => {
+    img.remove();
+  }, 250); // ← 0.25秒（数フレーム）
+}
+
+document.getElementById("pw").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    if(this.value === correct){
+      document.body.innerHTML = `
+<pre>
+error code:[96013]
+access granted.
+
+処理は完了した。
+それは、もう知っている。
+秩序は回っている。
+</pre>
+`;
+      featherDrop();
+    } else {
+      document.getElementById("msg").innerText = "access denied.";
+    }
+  }
+});
+</script>
