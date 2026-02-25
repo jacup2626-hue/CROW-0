@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>CROW</title>
+
+<style>
+body {
+  background: black;
+  color: #00ff00;
+  font-family: monospace;
+  margin: 40px;
+}
+
+input {
+  background: black;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  font-family: monospace;
+}
+
+pre {
+  white-space: pre-wrap;
+}
+</style>
+</head>
+
+<body>
+
+<pre>
+No names. No traces.
+</pre>
+
+<p>> enter password_</p>
+<input id="pw" type="password" autofocus>
+<p id="msg"></p>
+
+<script>
+/* ===== 設定 ===== */
+const correct = "96013";
+const LOGO_FILE = "file_0000000057d471fa82068bf4457a4806.png";
+
+/* ===== ノイズ（砂嵐）1秒 ===== */
+function noiseBurst(ms = 1000) {
+  const c = document.createElement("canvas");
+  const ctx = c.getContext("2d");
+
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+
+  c.style.position = "fixed";
+  c.style.left = "0";
+  c.style.top = "0";
+  c.style.width = "100vw";
+  c.style.height = "100vh";
+  c.style.zIndex = "9998";
+  c.style.pointerEvents = "none";
+  c.style.opacity = "0.18";
+  c.style.mixBlendMode = "screen";
+
+  document.body.appendChild(c);
+
+  let stop = false;
+
+  function frame() {
+    if (stop) return;
+    const img = ctx.createImageData(c.width, c.height);
+    const d = img.data;
+
+    for (let i = 0; i < d.length; i += 4) {
+      const v = (Math.random() * 255) | 0;
+      d[i] = v;
+      d[i + 1] = v;
+      d[i + 2] = v;
+      d[i + 3] = 255;
+    }
+
+    ctx.putImageData(img, 0, 0);
+    requestAnimationFrame(frame);
+  }
+
+  frame();
+
+  setTimeout(() => {
+    stop = true;
+    c.remove();
+  }, ms);
+}
+
+/* ===== Feather Drop（ロゴ 1秒） ===== */
+function featherDrop() {
+  const img = document.createElement("img");
+  img.src = LOGO_FILE;
+  img.style.position = "fixed";
+  img.style.left = "50%";
+  img.style.top = "50%";
+  img.style.transform = "translate(-50%, -50%)";
+  img.style.width = "220px";
+  img.style.opacity = "0.95";
+  img.style.pointerEvents = "none";
+  img.style.zIndex = "9999";
+
+  img.onerror = () => img.remove();
+
+  document.body.appendChild(img);
+
+  setTimeout(() => {
+    img.remove();
+  }, 1000); // ← 1秒表示
+}
+
+/* ===== 入力処理 ===== */
+document.getElementById("pw").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    if (this.value === correct) {
+      document.body.innerHTML = `
+<pre>
+error code:[96013]
+access granted.
+
+処理は完了した。
+それは、もう知っている。
+秩序は回っている。
+</pre>
+`;
+      noiseBurst(1000); // ← ノイズ 1秒
+      featherDrop();   // ← ロゴ 1秒（同時）
+    } else {
+      document.getElementById("msg").innerText = "access denied.";
+    }
+  }
+});
+</script>
+
+</body>
+</html>
